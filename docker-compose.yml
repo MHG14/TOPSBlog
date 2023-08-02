@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  dev-db:
+    image: postgres
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: mhg14
+      POSTGRES_PASSWORD: SuPeRsEcReTpAsSwOrD
+      POSTGRES_DB: TOPS
+    networks:
+      - TOPS
+networks:
+  TOPS:
