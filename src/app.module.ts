@@ -6,12 +6,15 @@ import { PostModule } from './post/post.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { CommentModule } from './comment/comment.module';
+import { LoggerModule } from 'nestjs-pino';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    LoggerModule.forRoot(),
     AuthModule,
     UserModule,
     PostModule,
