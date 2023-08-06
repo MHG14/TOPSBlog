@@ -8,10 +8,10 @@ import { RolesGuard } from 'src/auth/guard/roles.guard';
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UserController {
-  @Get('me')
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
-  getMe(@GetUser() user: User) {
-    return user;
-  }
+  // @Get('me')
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
+  // getMe(@GetUser() user: User) {
+  //   return user;
+  // }
 }

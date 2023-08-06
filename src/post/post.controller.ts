@@ -9,10 +9,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { AddPostDto, EditPostDto } from './dto';
+import { Post as PostType } from '@prisma/client';
 import { PostService } from './post.service';
+import { PostResponseType } from './dto/post-response.type';
+import { DeletedPostResponse } from './dto/deleted-post-response.type';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -21,6 +25,10 @@ export class PostController {
 
   // posts' controllers
   @Get()
+  @ApiOkResponse({
+    description: 'retrieved list of posts as response',
+    type: [PostResponseType],
+  })
   getPosts() {
     try {
       return this.postService.getPosts();
@@ -30,15 +38,23 @@ export class PostController {
   }
 
   @Get(':id')
+  @ApiOkResponse({
+    description: 'retrieved post as response',
+    type: PostResponseType,
+  })
   getPost(@Param('id', ParseIntPipe) postId: number) {
     try {
       return this.postService.getPost(postId);
     } catch (error) {
-        throw error
+      throw error;
     }
   }
 
   @Post()
+  @ApiCreatedResponse({
+    description: 'created post as response',
+    type: PostResponseType,
+  })
   addPost(@Body() dto: AddPostDto, @GetUser('id') authorId: number) {
     try {
       return this.postService.addPost(dto, authorId);
@@ -48,6 +64,10 @@ export class PostController {
   }
 
   @Patch(':postId')
+  @ApiOkResponse({
+    description: 'edited post as response',
+    type: PostResponseType,
+  })
   editPost(
     @Body() dto: EditPostDto,
     @GetUser('id') authorId: number,
@@ -61,6 +81,10 @@ export class PostController {
   }
 
   @Delete(':postId')
+  @ApiOkResponse({
+    description: 'deleted post response message',
+    type: DeletedPostResponse,
+  })
   deletePost(@Param('postId', ParseIntPipe) postId: number) {
     try {
       return this.postService.deletePost(postId);

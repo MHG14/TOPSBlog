@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Comment, Post } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AddPostDto, EditPostDto } from './dto'
+import { AddPostDto, EditPostDto } from './dto';
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
