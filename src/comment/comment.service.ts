@@ -1,15 +1,21 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Comment } from '@prisma/client';
+import { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { CommentDto } from './dto/comment.dto';
 
 @Injectable()
 export class CommentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
   async checkIfAdmin(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -34,7 +40,12 @@ export class CommentService {
   }
 
   async getComments(): Promise<Array<Comment>> {
-    return await this.prisma.comment.findMany();
+    const comments = await this.prisma.comment.findMany();
+    await this.cacheManager.set('get-comments', comments);
+    const cachedItem = await this.cacheManager.get('get-comments');
+    console.log(cachedItem);
+
+    return comments;
   }
 
   async getComment(commentId: number, userId: number): Promise<Comment> {
@@ -54,6 +65,11 @@ export class CommentService {
         );
       }
     }
+
+    await this.cacheManager.set('get-comment', comment);
+    const cachedItem = await this.cacheManager.get('get-comment');
+    console.log(cachedItem);
+
     return comment;
   }
 
@@ -88,7 +104,10 @@ export class CommentService {
     return updatedComment;
   }
 
-  async deleteComment(commentId: number, userId: number): Promise<{ msg: string }> {
+  async deleteComment(
+    commentId: number,
+    userId: number,
+  ): Promise<{ msg: string }> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
@@ -13,6 +14,10 @@ import { LoggerModule } from 'nestjs-pino';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    CacheModule.register({
+      ttl: 60000,
+      isGlobal: true
     }),
     LoggerModule.forRoot(),
     AuthModule,

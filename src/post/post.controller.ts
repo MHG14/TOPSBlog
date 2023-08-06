@@ -9,6 +9,7 @@ import {
   Post,
   UseGuards,
   Logger,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { GetUser, Roles } from '../auth/decorator';
@@ -19,7 +20,9 @@ import { PostService } from './post.service';
 import { PostResponseType } from './dto/post-response.type';
 import { DeletedPostResponse } from './dto/deleted-post-response.type';
 import { Role } from '../auth/enum/roles.enum';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
+@UseInterceptors(CacheInterceptor)
 @UseGuards(JwtGuard)
 @Controller('posts')
 export class PostController {

@@ -1,3 +1,4 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -9,6 +10,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiProperty } from '@nestjs/swagger';
 import { GetUser, Roles } from '../auth/decorator';
@@ -19,6 +21,7 @@ import { CommentResponseType } from './dto/comment-response.type';
 import { CommentDto } from './dto/comment.dto';
 import { DeletedCommentResponse } from './dto/deleted-comment-response.type';
 
+@UseInterceptors(CacheInterceptor)
 @UseGuards(JwtGuard)
 @Controller('comments')
 export class CommentController {

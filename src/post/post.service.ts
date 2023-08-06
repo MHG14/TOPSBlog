@@ -1,14 +1,17 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Comment, Post } from '@prisma/client';
+import { Cache } from 'cache-manager';
 import { PrismaService } from '../prisma/prisma.service';
 import { AddPostDto, EditPostDto } from './dto';
 @Injectable()
 export class PostService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, @Inject(CACHE_MANAGER) private cacheManager: Cache) {}
   async checkIfAdmin(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -20,7 +23,11 @@ export class PostService {
   }
 
   async getPosts(): Promise<Array<Post>> {
-    return await this.prisma.post.findMany();
+    const posts = await this.prisma.post.findMany();
+    await this.cacheManager.set("get-posts", posts)
+    const cachedItem = await this.cacheManager.get("get-posts")
+    console.log(cachedItem)
+    return posts
   }
 
   async getPost(postId: number, userId: number): Promise<Post> {
@@ -40,6 +47,9 @@ export class PostService {
         );
       }
     }
+    await this.cacheManager.set("get-post", post)
+    const cachedItem = await this.cacheManager.get("get-post")
+    console.log(cachedItem)
     return post;
   }
 
