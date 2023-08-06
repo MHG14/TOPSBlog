@@ -19,22 +19,25 @@ model User {
   hashedPassword String
   firstName      String
   lastName       String
+  role           Role   @default(USER)
 
-  posts Post[]
+  posts    Post[]
   comments Comment[]
 
   @@map("users")
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  publishedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  title   String
-  content String
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  title    String
+  content  String
+  
+  authorId Int
+  author   User     @relation(fields: [authorId], references: [id])
+  tags     String[]
 
   comments Comment[]
 
@@ -49,10 +52,15 @@ model Comment {
   content String
 
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   postId Int
-  post Post @relation(fields: [postId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
 
   @@map("comments")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
