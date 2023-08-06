@@ -11,9 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiProperty } from '@nestjs/swagger';
-import { GetUser, Roles } from 'src/auth/decorator';
-import { Role } from 'src/auth/enum/roles.enum';
-import { JwtGuard } from 'src/auth/guard';
+import { GetUser, Roles } from '../auth/decorator';
+import { Role } from '../auth/enum/roles.enum';
+import { JwtGuard } from '../auth/guard';
 import { CommentService } from './comment.service';
 import { CommentResponseType } from './dto/comment-response.type';
 import { CommentDto } from './dto/comment.dto';

@@ -11,14 +11,14 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
-import { GetUser, Roles } from 'src/auth/decorator';
-import { JwtGuard } from 'src/auth/guard';
+import { GetUser, Roles } from '../auth/decorator';
+import { JwtGuard } from '../auth/guard';
 import { AddPostDto, EditPostDto } from './dto';
 import { Post as PostType } from '@prisma/client';
 import { PostService } from './post.service';
 import { PostResponseType } from './dto/post-response.type';
 import { DeletedPostResponse } from './dto/deleted-post-response.type';
-import { Role } from 'src/auth/enum/roles.enum';
+import { Role } from '../auth/enum/roles.enum';
 
 @UseGuards(JwtGuard)
 @Controller('posts')

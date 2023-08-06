@@ -10,5 +10,15 @@ services:
       POSTGRES_DB: TOPS
     networks:
       - TOPS
+  test-db:
+    image: postgres
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: mhg14
+      POSTGRES_PASSWORD: SuPeRsEcReTpAsSwOrD
+      POSTGRES_DB: TOPS
+    networks:
+      - TOPS
 networks:
   TOPS:
