@@ -47,9 +47,9 @@ export class CommentController {
     description: 'retrieved comment as response',
     type: CommentResponseType,
   })
-  getComment(@Param('commentId', ParseIntPipe) commentId: number) {
+  getComment(@Param('commentId', ParseIntPipe) commentId: number, @GetUser("id", ParseIntPipe) userId: number) {
     try {
-      return this.commentService.getComment(commentId);
+      return this.commentService.getComment(commentId, userId);
     } catch (error) {
       this.logger.warn(error.message);
       throw error;
@@ -97,9 +97,9 @@ export class CommentController {
     description: 'deleted post response message',
     type: DeletedCommentResponse,
   })
-  deleteComment(@Param('commentId', ParseIntPipe) commentId: number) {
+  deleteComment(@Param('commentId', ParseIntPipe) commentId: number, @GetUser("id", ParseIntPipe) userId: number) {
     try {
-      return this.commentService.deleteComment(commentId);
+      return this.commentService.deleteComment(commentId, userId);
     } catch (error) {
       this.logger.warn(error.message);
       throw error;

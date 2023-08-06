@@ -10,6 +10,15 @@ import { CommentDto } from './dto/comment.dto';
 @Injectable()
 export class CommentService {
   constructor(private prisma: PrismaService) {}
+  async checkIfAdmin(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (user.role === 'ADMIN') return true;
+    return false;
+  }
   async addComment(
     dto: CommentDto,
     userId: number,
@@ -28,7 +37,7 @@ export class CommentService {
     return await this.prisma.comment.findMany();
   }
 
-  async getComment(commentId: number): Promise<Comment> {
+  async getComment(commentId: number, userId: number): Promise<Comment> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -37,6 +46,13 @@ export class CommentService {
 
     if (!comment) {
       throw new NotFoundException('comment not found');
+    }
+    if (!this.checkIfAdmin(userId)) {
+      if (comment.userId !== userId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
     }
     return comment;
   }
@@ -55,9 +71,12 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException('comment not found');
     }
-
-    if (comment.userId !== userId) {
-      throw new ForbiddenException('you are not allowed to do this operation');
+    if (!this.checkIfAdmin(userId)) {
+      if (comment.userId !== userId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
     }
 
     const updatedComment = await this.prisma.comment.update({
@@ -69,7 +88,7 @@ export class CommentService {
     return updatedComment;
   }
 
-  async deleteComment(commentId: number): Promise<{ msg: string }> {
+  async deleteComment(commentId: number, userId: number): Promise<{ msg: string }> {
     const comment = await this.prisma.comment.findUnique({
       where: {
         id: commentId,
@@ -78,6 +97,15 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException('comment not found');
     }
+
+    if (!this.checkIfAdmin(userId)) {
+      if (comment.userId !== userId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
+    }
+
     await this.prisma.comment.delete({
       where: {
         id: commentId,

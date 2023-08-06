@@ -9,12 +9,21 @@ import { AddPostDto, EditPostDto } from './dto';
 @Injectable()
 export class PostService {
   constructor(private prisma: PrismaService) {}
+  async checkIfAdmin(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (user.role === 'ADMIN') return true;
+    return false;
+  }
 
   async getPosts(): Promise<Array<Post>> {
     return await this.prisma.post.findMany();
   }
 
-  async getPost(postId: number): Promise<Post> {
+  async getPost(postId: number, userId: number): Promise<Post> {
     const post = await this.prisma.post.findUnique({
       where: {
         id: postId,
@@ -23,6 +32,13 @@ export class PostService {
 
     if (!post) {
       throw new NotFoundException('post not found');
+    }
+    if (!this.checkIfAdmin(userId)) {
+      if (post.authorId !== userId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
     }
     return post;
   }
@@ -51,8 +67,12 @@ export class PostService {
       throw new NotFoundException('post not found');
     }
 
-    if (post.authorId !== authorId) {
-      throw new ForbiddenException('you are not allowed to do this operation');
+    if (!this.checkIfAdmin(authorId)) {
+      if (post.authorId !== authorId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
     }
 
     const updatedPost = await this.prisma.post.update({
@@ -64,7 +84,7 @@ export class PostService {
     return updatedPost;
   }
 
-  async deletePost(postId: number): Promise<{ msg: string }> {
+  async deletePost(postId: number, authorId): Promise<{ msg: string }> {
     const post = await this.prisma.post.findUnique({
       where: {
         id: postId,
@@ -73,6 +93,15 @@ export class PostService {
     if (!post) {
       throw new NotFoundException('post not found');
     }
+
+    if (!this.checkIfAdmin(authorId)) {
+      if (post.authorId !== authorId) {
+        throw new ForbiddenException(
+          'you are not allowed to do this operation',
+        );
+      }
+    }
+
     await this.prisma.post.delete({
       where: {
         id: postId,

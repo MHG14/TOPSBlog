@@ -47,9 +47,9 @@ export class PostController {
     description: 'retrieved post as response',
     type: PostResponseType,
   })
-  getPost(@Param('id', ParseIntPipe) postId: number) {
+  getPost(@Param('id', ParseIntPipe) postId: number, @GetUser("id") authorId: number) {
     try {
-      return this.postService.getPost(postId);
+      return this.postService.getPost(postId, authorId);
     } catch (error) {
       this.logger.warn(error.message);
       throw error;
@@ -93,9 +93,9 @@ export class PostController {
     description: 'deleted post response message',
     type: DeletedPostResponse,
   })
-  deletePost(@Param('postId', ParseIntPipe) postId: number) {
+  deletePost(@Param('postId', ParseIntPipe) postId: number, @GetUser("id") authorId: number) {
     try {
-      return this.postService.deletePost(postId);
+      return this.postService.deletePost(postId, authorId);
     } catch (error) {
       this.logger.warn(error.message);
       throw error;
