@@ -37,6 +37,7 @@
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^7.1.6",
+    "@nestjs/throttler": "^4.2.1",
     "@prisma/client": "^5.1.0",
     "@types/cache-manager": "^4.0.2",
     "@types/morgan": "^1.9.4",
